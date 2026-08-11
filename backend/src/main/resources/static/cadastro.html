@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - BiblioTech</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .register-container {
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+        }
+
+        .register-box {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+            padding: 50px 40px;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .logo i {
+            font-size: 35px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #667eea;
+            font-size: 16px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 15px 14px 45px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: 0.3s;
+            background: #f8f9fa;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        input:invalid:not(:placeholder-shown) {
+            border-color: #ff6b6b;
+        }
+
+        .error-message {
+            color: #ff6b6b;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .btn-register {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-bottom: 20px;
+            margin-top: 10px;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-register:active {
+            transform: translateY(0);
+        }
+
+        .btn-register:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .login-link {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .login-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .alert {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading {
+            display: none;
+        }
+
+        .loading.show {
+            display: inline;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="register-box">
+            <div class="logo">
+                <i class="fas fa-book"></i>
+            </div>
+
+            <h1>Criar Conta</h1>
+            <p class="subtitle">Registre-se no BiblioTech</p>
+
+            <div id="alertBox" class="alert"></div>
+
+            <form id="registerForm" onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label for="nome">Nome Completo</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user"></i>
+                        <input 
+                            type="text" 
+                            id="nome" 
+                            name="nome" 
+                            placeholder="Seu nome completo"
+                            required
+                        >
+                    </div>
+                    <div class="error-message" id="nomeError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="matricula">Matrícula</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-id-card"></i>
+                        <input 
+                            type="text" 
+                            id="matricula" 
+                            name="matricula" 
+                            placeholder="Número de matrícula"
+                        >
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="endereco">Endereço</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <input 
+                            type="text" 
+                            id="endereco" 
+                            name="endereco" 
+                            placeholder="Rua, número, bairro"
+                        >
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-envelope"></i>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            placeholder="seu@email.com"
+                            required
+                        >
+                    </div>
+                    <div class="error-message" id="emailError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="telefone">Telefone (Opcional)</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-phone"></i>
+                        <input 
+                            type="tel" 
+                            id="telefone" 
+                            name="telefone" 
+                            placeholder="(11) 99999-9999"
+                        >
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="senha">Senha</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock"></i>
+                        <input 
+                            type="password" 
+                            id="senha" 
+                            name="senha" 
+                            placeholder="Crie uma senha forte"
+                            required
+                        >
+                    </div>
+                    <div class="error-message" id="senhaError"></div>
+                </div>
+
+                <button type="submit" class="btn-register" id="registerBtn">
+                    <span class="loading" id="loading">
+                        <span class="spinner"></span>
+                    </span>
+                    <span id="btnText">Criar Conta</span>
+                </button>
+            </form>
+
+            <p class="login-link">
+                Já tem conta? <a href="/login.html">Fazer login</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const alertBox = document.getElementById('alertBox');
+        const registerForm = document.getElementById('registerForm');
+        const registerBtn = document.getElementById('registerBtn');
+        const loading = document.getElementById('loading');
+        const btnText = document.getElementById('btnText');
+
+        function showAlert(message, type = 'error') {
+            alertBox.textContent = message;
+            alertBox.className = `alert ${type} show`;
+            setTimeout(() => {
+                alertBox.classList.remove('show');
+            }, 5000);
+        }
+
+        async function handleRegister(event) {
+            event.preventDefault();
+
+            const nome = document.getElementById('nome').value.trim();
+            const matricula = document.getElementById('matricula').value.trim();
+            const endereco = document.getElementById('endereco').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const telefone = document.getElementById('telefone').value.trim();
+            const senha = document.getElementById('senha').value;
+
+            // Validações
+            if (!nome) {
+                showAlert('Nome é obrigatório');
+                return;
+            }
+
+            if (nome.length < 3) {
+                showAlert('Nome deve ter pelo menos 3 caracteres');
+                return;
+            }
+
+            if (!email) {
+                showAlert('Email é obrigatório');
+                return;
+            }
+
+            if (!email.includes('@')) {
+                showAlert('Email inválido');
+                return;
+            }
+
+            if (!senha) {
+                showAlert('Senha é obrigatória');
+                return;
+            }
+
+            if (senha.length < 3) {
+                showAlert('Senha deve ter pelo menos 3 caracteres');
+                return;
+            }
+
+            // Desabilitar botão e mostrar loading
+            registerBtn.disabled = true;
+            loading.classList.add('show');
+            btnText.textContent = 'Criando conta...';
+
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        nome: nome,
+                        matricula: matricula || null,
+                        endereco: endereco || null,
+                        email: email,
+                        senha: senha,
+                        telefone: telefone || null
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.sucesso) {
+                    showAlert('Cadastro realizado com sucesso!', 'success');
+                    
+                    // Redirecionar para login após 1.5s
+                    setTimeout(() => {
+                        window.location.href = '/login.html';
+                    }, 1500);
+                } else {
+                    showAlert(data.mensagem || 'Erro ao criar conta');
+                    registerBtn.disabled = false;
+                    loading.classList.remove('show');
+                    btnText.textContent = 'Criar Conta';
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                showAlert('Erro ao conectar com o servidor');
+                registerBtn.disabled = false;
+                loading.classList.remove('show');
+                btnText.textContent = 'Criar Conta';
+            }
+        }
+
+        // Validação em tempo real
+        document.getElementById('nome').addEventListener('blur', function() {
+            const nomeError = document.getElementById('nomeError');
+            if (this.value.length < 3 && this.value.length > 0) {
+                nomeError.textContent = 'Nome deve ter pelo menos 3 caracteres';
+                nomeError.classList.add('show');
+            } else {
+                nomeError.classList.remove('show');
+            }
+        });
+
+        document.getElementById('email').addEventListener('blur', function() {
+            const emailError = document.getElementById('emailError');
+            if (!this.value.includes('@') && this.value.length > 0) {
+                emailError.textContent = 'Email inválido';
+                emailError.classList.add('show');
+            } else {
+                emailError.classList.remove('show');
+            }
+        });
+
+        document.getElementById('senha').addEventListener('blur', function() {
+            const senhaError = document.getElementById('senhaError');
+            if (this.value.length < 3 && this.value.length > 0) {
+                senhaError.textContent = 'Senha deve ter pelo menos 3 caracteres';
+                senhaError.classList.add('show');
+            } else {
+                senhaError.classList.remove('show');
+            }
+        });
+
+        window.addEventListener('load', () => {
+            if (localStorage.getItem('usuario')) {
+                window.location.href = '/dashboard.html';
+            }
+        });
+    </script>
+</body>
+</html>
