@@ -129,6 +129,313 @@
             gap: 20px;
         }
 
+
+
+        .notification-center {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .notification-button {
+            width: 44px;
+            height: 44px;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            background: #fff;
+            color: #374151;
+            cursor: pointer;
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+        }
+
+        .notification-button:hover {
+            background: #f8fafc;
+            color: #2563eb;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 5px;
+            border-radius: 999px;
+            background: #ef4444;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #fff;
+        }
+
+        .notification-panel {
+            position: absolute;
+            top: 54px;
+            right: 0;
+            width: min(440px, calc(100vw - 32px));
+            max-height: 580px;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 18px;
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.18);
+            z-index: 1000;
+            display: none;
+            overflow: hidden;
+        }
+
+        .notification-panel.open { display: block; }
+
+        .notification-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 18px;
+            border-bottom: 1px solid #eef2f7;
+        }
+
+        .notification-panel-header-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #111827;
+        }
+
+        .notification-panel-count {
+            min-width: 22px;
+            height: 22px;
+            padding: 0 7px;
+            border-radius: 999px;
+            background: #eff6ff;
+            color: #2563eb;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-mark-all {
+            border: 0;
+            background: transparent;
+            color: #2563eb;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .notification-list {
+            max-height: 485px;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            padding: 15px 18px;
+            border-bottom: 1px solid #f1f5f9;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+            display: grid;
+            grid-template-columns: 38px 1fr 10px;
+            gap: 11px;
+            align-items: start;
+            background: #fff;
+            transition: background 0.15s ease, border-color 0.15s ease;
+        }
+
+        .notification-item.unread {
+            background: #f8fbff;
+            border-left-color: #2563eb;
+        }
+        .notification-item:hover { background: #f8fafc; }
+
+        .notification-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 11px;
+            background: #dbeafe;
+            color: #2563eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-icon.warning {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .notification-icon.danger {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .notification-unread-dot {
+            width: 8px;
+            height: 8px;
+            margin-top: 7px;
+            border-radius: 50%;
+            background: #2563eb;
+            opacity: 0;
+        }
+
+        .notification-item.unread .notification-unread-dot { opacity: 1; }
+
+        .notification-content strong {
+            display: block;
+            color: #111827;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .notification-content p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .notification-content small {
+            display: block;
+            margin-top: 6px;
+            color: #9ca3af;
+            font-size: 11px;
+        }
+
+        .notification-empty {
+            padding: 32px 18px;
+            color: #6b7280;
+            text-align: center;
+            font-size: 14px;
+        }
+
+
+        .notification-toast-container {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 3000;
+            width: min(390px, calc(100vw - 32px));
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            pointer-events: none;
+        }
+
+        .notification-toast {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-left: 5px solid #2563eb;
+            border-radius: 16px;
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.22);
+            padding: 14px 15px;
+            display: grid;
+            grid-template-columns: 40px 1fr 30px;
+            gap: 11px;
+            align-items: start;
+            pointer-events: auto;
+            animation: notificationToastIn 0.28s ease-out;
+        }
+
+        .notification-toast.warning { border-left-color: #d97706; }
+        .notification-toast.danger { border-left-color: #dc2626; }
+
+        .notification-toast-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: #dbeafe;
+            color: #2563eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .notification-toast.warning .notification-toast-icon {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .notification-toast.danger .notification-toast-icon {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .notification-toast-text strong {
+            display: block;
+            color: #111827;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .notification-toast-text p {
+            margin: 0;
+            color: #4b5563;
+            font-size: 13px;
+            line-height: 1.45;
+        }
+
+        .notification-toast-text small {
+            display: block;
+            color: #9ca3af;
+            font-size: 11px;
+            margin-top: 6px;
+        }
+
+        .notification-toast-close {
+            width: 30px;
+            height: 30px;
+            border: 0;
+            border-radius: 8px;
+            background: transparent;
+            color: #9ca3af;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-toast-close:hover {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .notification-toast.saindo {
+            animation: notificationToastOut 0.22s ease-in forwards;
+        }
+
+        @keyframes notificationToastIn {
+            from { opacity: 0; transform: translateX(28px) scale(0.98); }
+            to { opacity: 1; transform: translateX(0) scale(1); }
+        }
+
+        @keyframes notificationToastOut {
+            from { opacity: 1; transform: translateX(0); }
+            to { opacity: 0; transform: translateX(28px); }
+        }
+
+        @media (max-width: 640px) {
+            .notification-toast-container {
+                top: 12px;
+                right: 16px;
+                left: 16px;
+                width: auto;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .notification-toast,
+            .notification-toast.saindo {
+                animation: none;
+            }
+        }
+
         .page-title {
             display: flex;
             flex-direction: column;
@@ -753,6 +1060,26 @@
                     Novo Empréstimo
                 </button>
             </div>
+
+            <div class="notification-center" id="notificationCenter">
+                <button class="notification-button" id="notificationButton" type="button" aria-label="Notificações" onclick="toggleNotificationPanel(event)">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="notificationBadge">0</span>
+                </button>
+                <div class="notification-panel" id="notificationPanel">
+                    <div class="notification-panel-header">
+                        <div class="notification-panel-header-title">
+                            <strong>Notificações</strong>
+                            <span class="notification-panel-count" id="notificationPanelCount">0</span>
+                        </div>
+                        <button class="notification-mark-all" type="button" onclick="marcarTodasNotificacoesComoLidas()">Marcar todas como lidas</button>
+                    </div>
+                    <div class="notification-list" id="notificationList">
+                        <div class="notification-empty">Carregando notificações...</div>
+                    </div>
+                </div>
+            </div>
+
             <div class="user-badge" id="userBadge">
                 <div>
                     <strong id="usuarioNomeDisplay">Usuário</strong>
@@ -1098,6 +1425,8 @@
         </div>
     </div>
 
+
+    <div class="notification-toast-container" id="notificationToastContainer" aria-live="polite" aria-atomic="false"></div>
 
     <script>
         const alertBox = document.getElementById('alertBox');
@@ -1682,6 +2011,7 @@
                 closeModal('modalEmprestimo');
                 loadEmprestimoTab(state.emprestimoStatus);
                 showAlert('Empréstimo registrado com sucesso!', 'success');
+                await carregarNotificacoes();
             } catch (error) {
                 console.error(error);
                 showAlert('Erro ao registrar empréstimo');
@@ -1741,16 +2071,264 @@
                 if (!resp.ok) throw new Error('Falha ao devolver livro');
                 loadEmprestimoTab(state.emprestimoStatus);
                 showAlert('Livro devolvido com sucesso!', 'success');
+                await carregarNotificacoes();
             } catch (error) {
                 console.error(error);
                 showAlert('Erro ao devolver livro');
             }
         }
 
+
+
+        function getUsuarioLogado() {
+            try {
+                return JSON.parse(localStorage.getItem('usuario'));
+            } catch (error) {
+                return null;
+            }
+        }
+
+        function iconeNotificacao(tipo) {
+            switch ((tipo || '').toUpperCase()) {
+                case 'EMPRESTIMO': return 'fa-book-reader';
+                case 'DEVOLUCAO': return 'fa-rotate-left';
+                case 'RESERVA': return 'fa-bookmark';
+                case 'DEVOLUCAO_PROXIMA': return 'fa-clock';
+                case 'ATRASO': return 'fa-triangle-exclamation';
+                default: return 'fa-bell';
+            }
+        }
+
+        function classeIconeNotificacao(tipo) {
+            switch ((tipo || '').toUpperCase()) {
+                case 'DEVOLUCAO_PROXIMA': return 'warning';
+                case 'ATRASO': return 'danger';
+                default: return '';
+            }
+        }
+
+        function formatarDataNotificacao(valor) {
+            if (!valor) return '';
+            const data = new Date(valor);
+            if (Number.isNaN(data.getTime())) return '';
+            return data.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+        }
+
+
+        let notificacaoAudioContext = null;
+
+        function habilitarSomNotificacao() {
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                if (!notificacaoAudioContext) notificacaoAudioContext = new AudioCtx();
+                if (notificacaoAudioContext.state === 'suspended') {
+                    notificacaoAudioContext.resume().catch(() => {});
+                }
+            } catch (error) {
+                console.debug('Áudio de notificação indisponível:', error);
+            }
+        }
+
+        function tocarSomNotificacao() {
+            try {
+                habilitarSomNotificacao();
+                if (!notificacaoAudioContext || notificacaoAudioContext.state !== 'running') return;
+
+                const agora = notificacaoAudioContext.currentTime;
+                const ganho = notificacaoAudioContext.createGain();
+                ganho.gain.setValueAtTime(0.0001, agora);
+                ganho.gain.exponentialRampToValueAtTime(0.16, agora + 0.015);
+                ganho.gain.exponentialRampToValueAtTime(0.0001, agora + 0.42);
+                ganho.connect(notificacaoAudioContext.destination);
+
+                const tom1 = notificacaoAudioContext.createOscillator();
+                tom1.type = 'sine';
+                tom1.frequency.setValueAtTime(880, agora);
+                tom1.connect(ganho);
+                tom1.start(agora);
+                tom1.stop(agora + 0.16);
+
+                const tom2 = notificacaoAudioContext.createOscillator();
+                tom2.type = 'sine';
+                tom2.frequency.setValueAtTime(1174.66, agora + 0.16);
+                tom2.connect(ganho);
+                tom2.start(agora + 0.16);
+                tom2.stop(agora + 0.42);
+            } catch (error) {
+                console.debug('Não foi possível tocar o som da notificação:', error);
+            }
+        }
+
+        function removerToastNotificacao(toast) {
+            if (!toast || !toast.isConnected) return;
+            toast.classList.add('saindo');
+            window.setTimeout(() => toast.remove(), 240);
+        }
+
+        function mostrarToastNotificacao(notificacao) {
+            const container = document.getElementById('notificationToastContainer');
+            if (!container || !notificacao) return;
+
+            const toast = document.createElement('div');
+            const classe = classeIconeNotificacao(notificacao.tipo);
+            toast.className = `notification-toast ${classe}`.trim();
+            toast.setAttribute('role', 'status');
+            toast.innerHTML = `
+                <div class="notification-toast-icon"><i class="fas ${iconeNotificacao(notificacao.tipo)}"></i></div>
+                <div class="notification-toast-text">
+                    <strong>${escapeHtml(notificacao.titulo || 'Nova notificação')}</strong>
+                    <p>${escapeHtml(notificacao.mensagem || '')}</p>
+                    <small>Agora</small>
+                </div>
+                <button type="button" class="notification-toast-close" aria-label="Fechar notificação">
+                    <i class="fas fa-xmark"></i>
+                </button>
+            `;
+
+            toast.querySelector('.notification-toast-close')?.addEventListener('click', () => removerToastNotificacao(toast));
+            container.prepend(toast);
+
+            while (container.children.length > 4) {
+                container.lastElementChild?.remove();
+            }
+
+            window.setTimeout(() => removerToastNotificacao(toast), 6500);
+        }
+
+        function processarNovasNotificacoes(notificacoes, usuarioId) {
+            if (!Array.isArray(notificacoes) || notificacoes.length === 0 || !usuarioId) return;
+
+            const chave = `bibliotech_notification_last_seen_${usuarioId}`;
+            const ids = notificacoes.map(n => Number(n.id)).filter(Number.isFinite);
+            if (ids.length === 0) return;
+
+            const maiorId = Math.max(...ids);
+            const ultimoVistoRaw = localStorage.getItem(chave);
+
+            // Na primeira carga apenas cria a referência. Assim notificações antigas
+            // não voltam como toast/som toda vez que o usuário abre ou atualiza a página.
+            if (ultimoVistoRaw === null) {
+                localStorage.setItem(chave, String(maiorId));
+                return;
+            }
+
+            const ultimoVisto = Number(ultimoVistoRaw) || 0;
+            const novas = notificacoes
+                .filter(n => Number(n.id) > ultimoVisto)
+                .sort((a, b) => Number(a.id) - Number(b.id));
+
+            if (novas.length === 0) {
+                if (maiorId > ultimoVisto) localStorage.setItem(chave, String(maiorId));
+                return;
+            }
+
+            novas.slice(-4).forEach(mostrarToastNotificacao);
+            tocarSomNotificacao();
+            localStorage.setItem(chave, String(Math.max(maiorId, ...novas.map(n => Number(n.id)))));
+        }
+
+        function renderNotificacoes(notificacoes) {
+            const list = document.getElementById('notificationList');
+            if (!list) return;
+            if (!notificacoes || notificacoes.length === 0) {
+                list.innerHTML = '<div class="notification-empty"><i class="far fa-bell" style="margin-right:6px;"></i>Nenhuma notificação por enquanto.</div>';
+                return;
+            }
+            list.innerHTML = notificacoes.map(n => `
+                <div class="notification-item ${n.lida ? '' : 'unread'}" onclick="marcarNotificacaoComoLida(${n.id})">
+                    <div class="notification-icon ${classeIconeNotificacao(n.tipo)}"><i class="fas ${iconeNotificacao(n.tipo)}"></i></div>
+                    <div class="notification-content">
+                        <strong>${escapeHtml(n.titulo || 'Notificação')}</strong>
+                        <p>${escapeHtml(n.mensagem || '')}</p>
+                        <small>${formatarDataNotificacao(n.dataCriacao)}</small>
+                    </div>
+                    <span class="notification-unread-dot" aria-hidden="true"></span>
+                </div>
+            `).join('');
+        }
+
+
+
+        async function carregarNotificacoes() {
+            const usuario = getUsuarioLogado();
+            if (!usuario || !usuario.id) return;
+            try {
+                // A listagem também dispara a verificação de prazos no backend.
+                // O contador é consultado depois para já refletir eventuais alertas recém-criados.
+                const listaResp = await fetch(`/api/notificacoes/usuario/${usuario.id}`);
+                if (!listaResp.ok) throw new Error('Falha ao carregar notificações');
+                const notificacoes = await listaResp.json();
+                processarNovasNotificacoes(notificacoes, usuario.id);
+
+                const countResp = await fetch(`/api/notificacoes/usuario/${usuario.id}/nao-lidas/count`);
+                if (!countResp.ok) throw new Error('Falha ao carregar contador de notificações');
+                const contador = await countResp.json();
+
+                renderNotificacoes(notificacoes);
+                const badge = document.getElementById('notificationBadge');
+                const panelCount = document.getElementById('notificationPanelCount');
+                const quantidade = Number(contador.quantidade || 0);
+                if (badge) {
+                    badge.textContent = quantidade > 99 ? '99+' : quantidade;
+                    badge.style.display = quantidade > 0 ? 'inline-flex' : 'none';
+                }
+                if (panelCount) {
+                    panelCount.textContent = quantidade > 99 ? '99+' : quantidade;
+                    panelCount.title = `${quantidade} notificação(ões) não lida(s)`;
+                }
+            } catch (error) {
+                console.error('Erro ao carregar notificações:', error);
+            }
+        }
+
+        function toggleNotificationPanel(event) {
+            if (event) event.stopPropagation();
+            const panel = document.getElementById('notificationPanel');
+            if (!panel) return;
+            panel.classList.toggle('open');
+            if (panel.classList.contains('open')) carregarNotificacoes();
+        }
+
+        async function marcarNotificacaoComoLida(id) {
+            const usuario = getUsuarioLogado();
+            if (!usuario || !usuario.id) return;
+            try {
+                const resp = await fetch(`/api/notificacoes/${id}/lida?usuarioId=${usuario.id}`, { method: 'PUT' });
+                if (!resp.ok && resp.status !== 404) throw new Error('Falha ao marcar notificação');
+                await carregarNotificacoes();
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        async function marcarTodasNotificacoesComoLidas() {
+            const usuario = getUsuarioLogado();
+            if (!usuario || !usuario.id) return;
+            try {
+                const resp = await fetch(`/api/notificacoes/usuario/${usuario.id}/lidas`, { method: 'PUT' });
+                if (!resp.ok) throw new Error('Falha ao marcar notificações');
+                await carregarNotificacoes();
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        document.addEventListener('click', (event) => {
+            const center = document.getElementById('notificationCenter');
+            const panel = document.getElementById('notificationPanel');
+            if (center && panel && !center.contains(event.target)) panel.classList.remove('open');
+        });
+
+        document.addEventListener('pointerdown', habilitarSomNotificacao, { once: true });
+        document.addEventListener('keydown', habilitarSomNotificacao, { once: true });
+
         window.addEventListener('load', () => {
             const usuario = verificarAutenticacao();
             if (!usuario) return;
             loadSection('dashboard');
+            carregarNotificacoes();
+            window.setInterval(carregarNotificacoes, 10000);
         });
     </script>
 </body>

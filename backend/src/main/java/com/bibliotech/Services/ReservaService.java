@@ -26,6 +26,9 @@ public class ReservaService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private NotificacaoService notificacaoService;
+
     /**
      * Criar nova reserva
      */
@@ -44,6 +47,13 @@ public class ReservaService {
         reserva.setStatus("ativa");
 
         Reserva reservaCriada = reservaRepository.save(reserva);
+
+        notificacaoService.criar(
+                usuario.get(),
+                "Reserva realizada",
+                "O livro \"" + livro.get().getTitulo() + "\" foi reservado com sucesso.",
+                "RESERVA"
+        );
         return converterParaDTO(reservaCriada);
     }
 
@@ -70,6 +80,13 @@ public class ReservaService {
         Reserva res = reserva.get();
         res.setStatus("cancelada");
         reservaRepository.save(res);
+
+        notificacaoService.criar(
+                res.getUsuario(),
+                "Reserva cancelada",
+                "A reserva do livro \"" + res.getLivro().getTitulo() + "\" foi cancelada.",
+                "RESERVA"
+        );
         return true;
     }
 

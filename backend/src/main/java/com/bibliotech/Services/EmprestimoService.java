@@ -26,6 +26,9 @@ public class EmprestimoService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private NotificacaoService notificacaoService;
+
     public EmprestimoDTO criarEmprestimo(Long livroId, Long usuarioId, LocalDate dataDevolucao) {
         Optional<Livro> livro = livroRepository.findById(livroId);
         Optional<Usuario> usuario = usuarioRepository.findById(usuarioId);
@@ -50,6 +53,13 @@ public class EmprestimoService {
         livroRepository.save(livroAtualizado);
 
         Emprestimo emprestimoCriado = emprestimoRepository.save(emprestimo);
+
+        notificacaoService.criar(
+                usuario.get(),
+                "Empréstimo realizado",
+                "O livro \"" + livro.get().getTitulo() + "\" foi emprestado. Devolução prevista para " + emprestimoCriado.getDataDevolucao() + ".",
+                "EMPRESTIMO"
+        );
 
         return converterParaDTO(emprestimoCriado);
     }
@@ -92,6 +102,13 @@ public class EmprestimoService {
         livroRepository.save(livro);
 
         emprestimoRepository.save(emp);
+
+        notificacaoService.criar(
+                emp.getUsuario(),
+                "Livro devolvido",
+                "A devolução do livro \"" + emp.getLivro().getTitulo() + "\" foi registrada com sucesso.",
+                "DEVOLUCAO"
+        );
         return true;
     }
 
