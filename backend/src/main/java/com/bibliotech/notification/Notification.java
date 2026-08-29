@@ -1,6 +1,6 @@
 package com.bibliotech.notification;
 
-import com.bibliotech.usuario.Usuario;
+import com.bibliotech.Entidades.Usuario;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;

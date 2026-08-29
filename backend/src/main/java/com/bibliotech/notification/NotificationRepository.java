@@ -1,6 +1,6 @@
 package com.bibliotech.notification;
 
-import com.bibliotech.usuario.Usuario;
+import com.bibliotech.Entidades.Usuario;;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

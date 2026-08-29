@@ -1,6 +1,6 @@
 package com.bibliotech.notification;
 
-import com.bibliotech.usuario.Usuario;
+import com.bibliotech.Entidades.Usuario;;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
