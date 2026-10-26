@@ -13,9 +13,13 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Service
 public class UsuarioService {
+
+@Autowired
+private PasswordEncoder passwordEncoder;
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -42,13 +46,20 @@ public class UsuarioService {
 
         Usuario usuario = usuarioOptional.get();
 
-        if (!usuario.getSenha().equals(loginRequest.getSenha())) {
-            return new LoginResponse(false, "Senha incorreta");
+        
+       if (!passwordEncoder.matches(
+        loginRequest.getSenha(),
+        usuario.getSenha())) {
+       return new LoginResponse(false, "E-mail ou senha inválidos");
+       }
+
+       return new LoginResponse(
+        true,
+        "Login realizado com sucesso",
+        converterParaDTO(usuario)
+        );
         }
-
-        return new LoginResponse(true, "Login realizado com sucesso", converterParaDTO(usuario));
-    }
-
+        
     /**
      * Registra novo usuário
      */
@@ -75,7 +86,11 @@ public class UsuarioService {
         Usuario novoUsuario = new Usuario();
         novoUsuario.setNome(registerRequest.getNome());
         novoUsuario.setEmail(registerRequest.getEmail());
-        novoUsuario.setSenha(registerRequest.getSenha());
+    
+        novoUsuario.setSenha(
+        passwordEncoder.encode(registerRequest.getSenha())
+     );
+
         // O tipo "bibliotecario" é apenas para autenticação do painel administrativo.
         // Ele não deve entrar na base de alunos cadastrados nem interferir no acervo.
         novoUsuario.setTipo("bibliotecario");

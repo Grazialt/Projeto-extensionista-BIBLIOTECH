@@ -1539,11 +1539,25 @@
                         <input id="livroAutor" type="text" placeholder="Digite o autor" />
                     </div>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="livroISBN">ISBN *</label>
-                        <input id="livroISBN" type="text" placeholder="ISBN do livro" />
-                    </div>
+              <div class="form-group">
+    <label for="livroISBN">ISBN *</label>
+
+    <div style="display: flex; gap: 8px;">
+        <input
+            id="livroISBN"
+            type="text"
+            placeholder="Digite o ISBN do livro"
+            style="flex: 1; min-width: 0;"
+        />
+
+        <button
+            type="button"
+            class="btn-primary"
+    lick="buscarLivroPorISBN()">
+            Buscar
+        </button>
+    </div>
+</div>
                     <div class="form-group">
                         <label for="livroAno">Ano</label>
                         <input id="livroAno" type="number" placeholder="Ano de publicação" />
@@ -2340,8 +2354,91 @@
             document.getElementById('usuarioContato').value = '';
             document.getElementById('usuarioTurma').value = '';
         }
+async function buscarLivroPorISBN() {
+    const campoISBN = document.getElementById('livroISBN');
 
-        async function saveLivro() {
+    const isbn = campoISBN.value
+        .replace(/[^0-9Xx]/g, '')
+        .toUpperCase();
+
+    if (!isbn) {
+        showAlert('Digite o ISBN do livro.');
+        campoISBN.focus();
+        return;
+    }
+
+    try {
+        showAlert('Buscando dados do livro...');
+
+        const url =
+            `https://www.googleapis.com/books/v1/volumes?q=isbn:${encodeURIComponent(isbn)}`;
+
+        const resposta = await fetch(url);
+
+        if (!resposta.ok) {
+            throw new Error('Falha na consulta ao catálogo.');
+        }
+
+        const dados = await resposta.json();
+
+        if (!dados.items || dados.items.length === 0) {
+            showAlert('Livro não encontrado. Preencha os dados manualmente.');
+            return;
+        }
+
+        // Prioriza um resultado cujo ISBN corresponda ao informado.
+        const normalizarISBN = valor =>
+            (valor || '').replace(/[^0-9Xx]/g, '').toUpperCase();
+
+        const resultado = dados.items.find(item =>
+            (item.volumeInfo?.industryIdentifiers || []).some(
+                identificador =>
+                    normalizarISBN(identificador.identifier) === isbn
+            )
+        ) || dados.items[0];
+
+        const livro = resultado.volumeInfo || {};
+
+        if (livro.title) {
+            document.getElementById('livroTitulo').value =
+                livro.title;
+        }
+
+        if (livro.authors?.length) {
+            document.getElementById('livroAutor').value =
+                livro.authors.join(', ');
+        }
+
+        if (livro.publisher) {
+            document.getElementById('livroEditora').value =
+                livro.publisher;
+        }
+
+        if (livro.publishedDate) {
+            const ano = livro.publishedDate.match(/^\d{4}/);
+
+            if (ano) {
+                document.getElementById('livroAno').value = ano[0];
+            }
+        }
+
+        if (livro.pageCount) {
+            document.getElementById('livroPaginas').value =
+                livro.pageCount;
+        }
+
+        showAlert(
+            'Dados encontrados! Confira as informações antes de salvar.',
+            'success'
+        );
+
+    } catch (erro) {
+        console.error('Erro ao buscar livro pelo ISBN:', erro);
+        showAlert(
+            'Não foi possível consultar o catálogo. Verifique sua conexão.'
+        );
+    }
+}
             const titulo = document.getElementById('livroTitulo').value.trim();
             const autorNome = document.getElementById('livroAutor').value.trim();
             const isbn = document.getElementById('livroISBN').value.trim();
