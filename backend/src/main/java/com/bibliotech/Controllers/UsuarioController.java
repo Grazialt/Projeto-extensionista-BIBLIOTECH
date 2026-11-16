@@ -5,10 +5,14 @@ import com.bibliotech.DTOs.LoginResponse;
 import com.bibliotech.DTOs.RegisterRequest;
 import com.bibliotech.DTOs.UsuarioDTO;
 import com.bibliotech.Services.UsuarioService;
+import com.bibliotech.Entidades.Usuario;
+import com.bibliotech.DTOs.CriarUsuarioRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.security.core.Authentication;
 import java.util.List;
 
 @RestController
@@ -54,10 +58,31 @@ public class UsuarioController {
     }
 
     @PostMapping("/usuarios")
-    public ResponseEntity<UsuarioDTO> criarUsuario(@RequestBody UsuarioDTO usuarioDTO) {
-        UsuarioDTO criado = usuarioService.criarUsuario(usuarioDTO);
-        return ResponseEntity.ok(criado);
+public ResponseEntity<?> criarUsuario(
+        @RequestBody CriarUsuarioRequest request,
+        Authentication authentication) {
+
+    boolean ehAdmin = authentication.getAuthorities().stream()
+            .anyMatch(autoridade ->
+                    autoridade.getAuthority().equals("ROLE_ADMIN"));
+
+    if ("bibliotecario".equalsIgnoreCase(request.getTipo())
+            && !ehAdmin) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body("Somente o ADMIN pode cadastrar bibliotecários.");
     }
+
+    try {
+        UsuarioDTO usuarioCriado =
+                usuarioService.criarUsuario(request);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(usuarioCriado);
+
+    } catch (IllegalArgumentException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+}
 
     @PutMapping("/usuarios/{id}")
     public ResponseEntity<UsuarioDTO> atualizarUsuario(@PathVariable Long id, @RequestBody UsuarioDTO usuarioDTO) {
@@ -75,31 +100,88 @@ public class UsuarioController {
     }
 
     @GetMapping("/usuario/{id}")
-    public ResponseEntity<?> obterUsuario(@PathVariable Long id) {
-        var usuarioOpt = usuarioService.obterUsuarioPorId(id);
-        if (usuarioOpt.isPresent()) {
-            return ResponseEntity.ok(usuarioOpt.get());
-        }
+public ResponseEntity<?> obterUsuario(
+        @PathVariable Long id,
+        Authentication authentication) {
+
+    Usuario usuarioAutenticado =
+            (Usuario) authentication.getPrincipal();
+
+    boolean ehAdminOuBibliotecario =
+            authentication.getAuthorities().stream()
+                    .anyMatch(autoridade ->
+                            autoridade.getAuthority().equals("ROLE_ADMIN")
+                            || autoridade.getAuthority().equals("ROLE_BIBLIOTECARIO"));
+
+    if (!ehAdminOuBibliotecario
+            && !usuarioAutenticado.getId().equals(id)) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    }
+
+    var usuarioOpt = usuarioService.obterUsuarioPorId(id);
+
+    if (usuarioOpt.isPresent()) {
+        return ResponseEntity.ok(usuarioOpt.get());
+    }
+
+    return ResponseEntity.notFound().build();
+}
+
+    @GetMapping("/usuarios/{id}/livros-lidos")
+public ResponseEntity<?> obterQuantidadeLivrosLidos(
+        @PathVariable Long id,
+        Authentication authentication) {
+
+    Usuario usuarioAutenticado =
+            (Usuario) authentication.getPrincipal();
+
+    boolean ehAdminOuBibliotecario =
+            authentication.getAuthorities().stream()
+                    .anyMatch(autoridade ->
+                            autoridade.getAuthority().equals("ROLE_ADMIN")
+                            || autoridade.getAuthority().equals("ROLE_BIBLIOTECARIO"));
+
+    if (!ehAdminOuBibliotecario
+            && !usuarioAutenticado.getId().equals(id)) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    }
+
+    var totalOpt = usuarioService.obterQuantidadeLivrosLidos(id);
+
+    if (totalOpt.isEmpty()) {
         return ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/usuarios/{id}/livros-lidos")
-    public ResponseEntity<?> obterQuantidadeLivrosLidos(@PathVariable Long id) {
-        var totalOpt = usuarioService.obterQuantidadeLivrosLidos(id);
-        if (totalOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(new LivrosLidosResponse(id, totalOpt.get()));
-    }
+    return ResponseEntity.ok(
+            new LivrosLidosResponse(id, totalOpt.get())
+    );
+}
 
     private record LivrosLidosResponse(Long usuarioId, long quantidadeLivrosLidos) {}
 
-    @GetMapping("/usuario/email/{email}")
-    public ResponseEntity<?> obterUsuarioPorEmail(@PathVariable String email) {
-        var usuarioOpt = usuarioService.obterUsuarioPorEmail(email);
-        if (usuarioOpt.isPresent()) {
-            return ResponseEntity.ok(usuarioOpt.get());
-        }
-        return ResponseEntity.ok(new LoginResponse(false, "Usuário não encontrado"));
+   @GetMapping("/usuario/email/{email}")
+public ResponseEntity<?> obterUsuarioPorEmail(
+        @PathVariable String email,
+        Authentication authentication) {
+
+    boolean ehAdminOuBibliotecario =
+            authentication.getAuthorities().stream()
+                    .anyMatch(autoridade ->
+                            autoridade.getAuthority().equals("ROLE_ADMIN")
+                            || autoridade.getAuthority().equals("ROLE_BIBLIOTECARIO"));
+
+    if (!ehAdminOuBibliotecario) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
-}
+
+    var usuarioOpt = usuarioService.obterUsuarioPorEmail(email);
+
+    if (usuarioOpt.isPresent()) {
+        return ResponseEntity.ok(usuarioOpt.get());
+    }
+
+    return ResponseEntity.ok(
+            new LoginResponse(false, "Usuário não encontrado")
+    );
+    }
+    }

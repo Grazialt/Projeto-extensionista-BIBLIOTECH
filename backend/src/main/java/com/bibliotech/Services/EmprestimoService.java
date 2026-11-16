@@ -9,6 +9,7 @@ import com.bibliotech.Repositories.LivroRepository;
 import com.bibliotech.Repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -29,15 +30,16 @@ public class EmprestimoService {
     @Autowired
     private NotificacaoService notificacaoService;
 
+    @Transactional
     public EmprestimoDTO criarEmprestimo(Long livroId, Long usuarioId, LocalDate dataDevolucao) {
-        Optional<Livro> livro = livroRepository.findById(livroId);
+        Optional<Livro> livro = livroRepository.buscarPorIdComBloqueio(livroId);
         Optional<Usuario> usuario = usuarioRepository.findById(usuarioId);
 
         if (livro.isEmpty() || usuario.isEmpty()) {
             return null;
         }
 
-        if (livro.get().getQuantidade() <= 0) {
+        if (livro.get().getQuantidade() == null || livro.get().getQuantidade() <= 0) {
             return null;
         }
 
@@ -86,8 +88,9 @@ public class EmprestimoService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public boolean devolverEmprestimo(Long emprestimoId) {
-        Optional<Emprestimo> emprestimo = emprestimoRepository.findById(emprestimoId);
+        Optional<Emprestimo> emprestimo = emprestimoRepository.buscarPorIdComBloqueio(emprestimoId);
 
         if (emprestimo.isEmpty() || !emprestimo.get().getStatus().equalsIgnoreCase("ativo")) {
             return false;

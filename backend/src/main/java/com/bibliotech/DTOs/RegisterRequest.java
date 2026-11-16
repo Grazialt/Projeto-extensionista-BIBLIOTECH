@@ -37,4 +37,3 @@ public class RegisterRequest {
         this.senha = senha;
     }
 }
-

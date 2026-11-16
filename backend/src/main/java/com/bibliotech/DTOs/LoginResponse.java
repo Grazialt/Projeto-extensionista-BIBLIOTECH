@@ -1,9 +1,11 @@
 package com.bibliotech.DTOs;
 
 public class LoginResponse {
+
     private boolean sucesso;
     private String mensagem;
     private UsuarioDTO usuario;
+    private String token;
 
     public LoginResponse(boolean sucesso, String mensagem) {
         this.sucesso = sucesso;
@@ -16,7 +18,13 @@ public class LoginResponse {
         this.usuario = usuario;
     }
 
-    // Getters e Setters
+    public LoginResponse(boolean sucesso, String mensagem, UsuarioDTO usuario, String token) {
+        this.sucesso = sucesso;
+        this.mensagem = mensagem;
+        this.usuario = usuario;
+        this.token = token;
+    }
+
     public boolean isSucesso() {
         return sucesso;
     }
@@ -39,5 +47,13 @@ public class LoginResponse {
 
     public void setUsuario(UsuarioDTO usuario) {
         this.usuario = usuario;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

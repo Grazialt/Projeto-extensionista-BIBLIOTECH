@@ -1,5 +1,6 @@
 package com.bibliotech.Services;
 
+import com.bibliotech.DTOs.CriarUsuarioRequest;
 import com.bibliotech.DTOs.LoginRequest;
 import com.bibliotech.DTOs.LoginResponse;
 import com.bibliotech.DTOs.RegisterRequest;
@@ -20,6 +21,9 @@ public class UsuarioService {
 
 @Autowired
 private PasswordEncoder passwordEncoder;
+
+@Autowired
+private JwtService jwtService;
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -46,20 +50,23 @@ private PasswordEncoder passwordEncoder;
 
         Usuario usuario = usuarioOptional.get();
 
-        
+
        if (!passwordEncoder.matches(
         loginRequest.getSenha(),
         usuario.getSenha())) {
        return new LoginResponse(false, "E-mail ou senha inválidos");
        }
 
-       return new LoginResponse(
-        true,
-        "Login realizado com sucesso",
-        converterParaDTO(usuario)
-        );
-        }
-        
+String token = jwtService.gerarToken(usuario);
+
+return new LoginResponse(
+    true,
+    "Login realizado com sucesso",
+    converterParaDTO(usuario),
+    token
+);
+}
+
     /**
      * Registra novo usuário
      */
@@ -86,15 +93,14 @@ private PasswordEncoder passwordEncoder;
         Usuario novoUsuario = new Usuario();
         novoUsuario.setNome(registerRequest.getNome());
         novoUsuario.setEmail(registerRequest.getEmail());
-    
+
         novoUsuario.setSenha(
         passwordEncoder.encode(registerRequest.getSenha())
      );
 
         // O tipo "bibliotecario" é apenas para autenticação do painel administrativo.
         // Ele não deve entrar na base de alunos cadastrados nem interferir no acervo.
-        novoUsuario.setTipo("bibliotecario");
-
+        novoUsuario.setTipo("aluno");
         usuarioRepository.save(novoUsuario);
 
         return new LoginResponse(true, "Cadastro realizado com sucesso", converterParaDTO(novoUsuario));
@@ -108,12 +114,14 @@ private PasswordEncoder passwordEncoder;
     }
 
     public Optional<UsuarioDTO> obterUsuarioPorId(Long id) {
-        return usuarioRepository.findById(id).map(this::converterParaDTO);
-    }
+    return usuarioRepository.findById(id)
+            .map(this::converterParaDTO);
+}
 
-    public Optional<UsuarioDTO> obterUsuarioPorEmail(String email) {
-        return usuarioRepository.findByEmailIgnoreCase(email.trim()).map(this::converterParaDTO);
-    }
+public Optional<UsuarioDTO> obterUsuarioPorEmail(String email) {
+    return usuarioRepository.findByEmailIgnoreCase(email.trim())
+            .map(this::converterParaDTO);
+}
 
     public Optional<Long> obterQuantidadeLivrosLidos(Long usuarioId) {
         if (!usuarioRepository.existsById(usuarioId)) {
@@ -122,35 +130,71 @@ private PasswordEncoder passwordEncoder;
         return Optional.of(emprestimoRepository.countByUsuarioIdAndStatusIgnoreCase(usuarioId, "devolvido"));
     }
 
-    public UsuarioDTO criarUsuario(UsuarioDTO dto) {
-        Usuario usuario = new Usuario();
-        usuario.setNome(dto.getNome());
-        usuario.setMatricula(dto.getMatricula());
-        usuario.setEndereco(dto.getEndereco());
-        usuario.setEmail(dto.getEmail());
-        usuario.setTelefone(dto.getTelefone());
-        usuario.setTipo(ehTipoSistema(dto.getTipo()) ? "aluno" : (dto.getTipo() != null ? dto.getTipo() : "aluno"));
-        usuario.setTurma(dto.getTurma());
-        usuarioRepository.save(usuario);
-        return converterParaDTO(usuario);
+
+
+public UsuarioDTO criarUsuario(CriarUsuarioRequest dto) {
+
+    if (dto.getEmail() == null || dto.getEmail().isBlank()) {
+        throw new IllegalArgumentException("E-mail é obrigatório");
     }
 
-    public Optional<UsuarioDTO> atualizarUsuario(Long id, UsuarioDTO dto) {
-        Optional<Usuario> usuarioOpt = usuarioRepository.findById(id);
-        if (usuarioOpt.isEmpty()) {
-            return Optional.empty();
-        }
-        Usuario usuario = usuarioOpt.get();
-        usuario.setNome(dto.getNome());
-        usuario.setMatricula(dto.getMatricula());
-        usuario.setEndereco(dto.getEndereco());
-        usuario.setEmail(dto.getEmail());
-        usuario.setTelefone(dto.getTelefone());
-        usuario.setTipo(dto.getTipo());
-        usuario.setTurma(dto.getTurma());
-        Usuario atualizado = usuarioRepository.save(usuario);
-        return Optional.of(converterParaDTO(atualizado));
+    if (dto.getSenha() == null || dto.getSenha().isBlank()) {
+        throw new IllegalArgumentException("Senha é obrigatória");
     }
+
+    if (usuarioRepository.findByEmailIgnoreCase(dto.getEmail().trim()).isPresent()) {
+        throw new IllegalArgumentException("E-mail já cadastrado");
+    }
+
+    Usuario usuario = new Usuario();
+
+    usuario.setNome(dto.getNome());
+    usuario.setMatricula(dto.getMatricula());
+    usuario.setEndereco(dto.getEndereco());
+    usuario.setEmail(dto.getEmail().trim());
+    usuario.setTelefone(dto.getTelefone());
+
+    usuario.setSenha(passwordEncoder.encode(dto.getSenha()));
+
+    String tipo = dto.getTipo();
+
+    if (tipo != null && tipo.equalsIgnoreCase("bibliotecario")) {
+        usuario.setTipo("bibliotecario");
+    } else {
+        usuario.setTipo("aluno");
+    }
+
+    usuario.setTurma(dto.getTurma());
+
+    usuarioRepository.save(usuario);
+
+    return converterParaDTO(usuario);
+}
+
+
+public Optional<UsuarioDTO> atualizarUsuario(Long id, UsuarioDTO dto) {
+    Optional<Usuario> usuarioOpt = usuarioRepository.findById(id);
+
+    if (usuarioOpt.isEmpty()) {
+        return Optional.empty();
+    }
+
+    Usuario usuario = usuarioOpt.get();
+
+    usuario.setNome(dto.getNome());
+    usuario.setMatricula(dto.getMatricula());
+    usuario.setEndereco(dto.getEndereco());
+    usuario.setEmail(dto.getEmail());
+    usuario.setTelefone(dto.getTelefone());
+    usuario.setTurma(dto.getTurma());
+
+    // O perfil não será alterado por este método.
+    // Isso impede a promoção indevida de usuários.
+
+    Usuario atualizado = usuarioRepository.save(usuario);
+
+    return Optional.of(converterParaDTO(atualizado));
+}
 
     public boolean deletarUsuario(Long id) {
         if (!usuarioRepository.existsById(id)) {

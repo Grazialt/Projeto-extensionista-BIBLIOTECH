@@ -111,7 +111,7 @@ Resposta:
 ```json
 {
   "email": "usuario@example.com",
-  "senha": "senha123"
+  "senha": "EXEMPLO_SENHA_NAO_REAL"
 }
 ```
 
@@ -124,7 +124,7 @@ Resposta:
   "matricula": "2024002",
   "endereco": "Av. B, 456",
   "email": "maria@example.com",
-  "senha": "senha123",
+  "senha": "EXEMPLO_SENHA_NAO_REAL",
   "telefone": "(11) 98888-8888"
 }
 ```
