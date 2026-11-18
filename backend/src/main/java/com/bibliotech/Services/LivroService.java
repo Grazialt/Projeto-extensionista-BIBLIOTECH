@@ -9,6 +9,7 @@ import com.bibliotech.Repositories.CategoriaRepository;
 import com.bibliotech.Repositories.LivroRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.bibliotech.Repositories.EmprestimoRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +26,9 @@ public class LivroService {
 
     @Autowired
     private CategoriaRepository categoriaRepository;
+
+    @Autowired
+private EmprestimoRepository emprestimoRepository;
 
     public List<LivroDTO> listarTodos() {
         return livroRepository.findAll().stream()
@@ -82,13 +86,22 @@ public class LivroService {
         return Optional.of(converterParaDTO(atualizado));
     }
 
-    public boolean deletar(Long id) {
-        if (!livroRepository.existsById(id)) {
-            return false;
-        }
-        livroRepository.deleteById(id);
-        return true;
+   
+public boolean deletar(Long id) {
+    if (!livroRepository.existsById(id)) {
+        return false;
     }
+
+    if (emprestimoRepository.existeEmprestimoDoLivro(id)) {
+        throw new IllegalStateException(
+            "Este livro possui histórico de empréstimos e não pode ser excluído."
+        );
+    }
+
+    livroRepository.deleteById(id);
+    return true;
+}
+
 
     private LivroDTO converterParaDTO(Livro livro) {
         LivroDTO dto = new LivroDTO(

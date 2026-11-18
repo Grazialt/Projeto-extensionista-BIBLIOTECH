@@ -44,11 +44,19 @@ public class LivroController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletarLivro(@PathVariable Long id) {
+   
+@DeleteMapping("/{id}")
+public ResponseEntity<?> deletarLivro(@PathVariable Long id) {
+    try {
         if (livroService.deletar(id)) {
             return ResponseEntity.ok().build();
         }
+
         return ResponseEntity.notFound().build();
+
+    } catch (IllegalStateException e) {
+        return ResponseEntity.status(409).body(e.getMessage());
     }
+}
+
 }

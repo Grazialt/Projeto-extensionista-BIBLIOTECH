@@ -24,4 +24,13 @@ public interface EmprestimoRepository extends JpaRepository<Emprestimo, Long> {
     List<Emprestimo> findByStatusIgnoreCase(String status);
 
     List<Emprestimo> findByUsuarioIdAndStatusIgnoreCase(Long usuarioId, String status);
+
+
+@Query("""
+    SELECT CASE WHEN COUNT(e) > 0 THEN true ELSE false END
+    FROM Emprestimo e
+    WHERE e.livro.id = :livroId
+""")
+boolean existeEmprestimoDoLivro(@Param("livroId") Long livroId);
+
 }
